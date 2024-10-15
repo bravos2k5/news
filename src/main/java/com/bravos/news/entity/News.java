@@ -25,6 +25,10 @@ public class News {
     private boolean isHome;
     private int categoryId;
 
+    public News(UUID id) {
+        this.setId(id);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

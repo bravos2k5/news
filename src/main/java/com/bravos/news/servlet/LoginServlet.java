@@ -65,17 +65,19 @@ public class LoginServlet extends HttpServlet {
             return;
         }
         user = userDAO.findByUsername(username);
-        if(user == null || BCrypt.checkpw(rawPassword,user.getPassword())) {
+        if(user == null || !BCrypt.checkpw(rawPassword,user.getPassword())) {
             req.setAttribute("message","Thông tin tài khoản mật khẩu không chính xác!");
             req.getRequestDispatcher("login.jsp").forward(req,resp);
             return;
         }
         UserInfo userInfo = new UserInfo(user.getId(),user.getUsername(),user.getFullName(),user.getRole());
         Cookie rememberCookie = new Cookie("remember",isRemember ? "true" : "false");
-        rememberCookie.setMaxAge(3600 * 24);
-        Cookie tokenCookie = new Cookie("accessToken",JwtUtil.generateToken(userInfo));
+        rememberCookie.setMaxAge(3600 * 24 * 3);
+        rememberCookie.setHttpOnly(true);
+        Cookie tokenCookie = new Cookie("accessToken",
+                JwtUtil.generateToken(userInfo,3 * 24 * 60 * 60 * 1000));
         tokenCookie.setHttpOnly(true);
-        tokenCookie.setMaxAge(3600 * 24);
+        tokenCookie.setMaxAge(isRemember ? 3600 * 24 * 3 : -1);
         session.setAttribute("user",userInfo);
         resp.addCookie(rememberCookie);
         resp.addCookie(tokenCookie);

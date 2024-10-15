@@ -87,7 +87,7 @@ function sendRequest() {
         sex: document.getElementById("sex").value,
         role: document.getElementById('role').value
     }
-    fetch('/api/admin/users', {
+    fetch('/api/private/users', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

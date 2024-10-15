@@ -36,6 +36,7 @@ public class NewsServlet extends HttpServlet {
                     return;
                 }
                 List<News> newsList = newsDAO.getNewsByCategory(news.getNews().getCategoryId());
+                newsList.remove(new News(id));
                 HttpSession session = req.getSession();
                 List<News> recentNews = (List<News>) session.getAttribute("recentNewsList");
                 recentNews.remove(news.getNews());

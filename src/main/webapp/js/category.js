@@ -61,7 +61,7 @@ function sendRequest() {
         id: Number.parseInt(document.getElementById("id").value),
         name: document.getElementById("name").value
     }
-    fetch('/api/admin/categories', {
+    fetch('/api/private/categories', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

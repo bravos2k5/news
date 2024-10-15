@@ -12,7 +12,7 @@ interface IDataObject<T, ID> {
 
     T update(T object);
 
-    void delete(T object);
+    boolean delete(T object);
 
     List<T> findBySql(String sql, Object... args);
 

@@ -1,4 +1,4 @@
-package com.bravos.news.servlet;
+package com.bravos.news.servlet.admin.api;
 
 import com.bravos.news.dao.UserDAO;
 import com.bravos.news.dto.NewUserCreated;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/api/admin/users")
+@WebServlet("/api/private/users")
 public class UsersApiServlet extends HttpServlet {
 
     private UserDAO userDAO;

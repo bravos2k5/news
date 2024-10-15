@@ -19,18 +19,17 @@ public class JwtUtil {
     private static final PrivateKey privateKey = KeyLoader.loadPrivateKey("D:\\Spring\\Servlet\\BravosNewsJDBC\\private.pem","16122005");
     private static final PublicKey publicKey = KeyLoader.loadPublicKey("D:\\Spring\\Servlet\\BravosNewsJDBC\\public.pem");
 
-    public static String generateToken(UserInfo user) {
+    public static String generateToken(UserInfo user, long tokenExp) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId().toString());
         claims.put("sub", user.getUsername());
         claims.put("role",user.getRole());
         claims.put("created", new Date());
-        long TOKEN_EXP = 24 * 60 * 60 * 1000;
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + TOKEN_EXP))
+                .expiration(new Date(System.currentTimeMillis() + tokenExp))
                 .and()
                 .signWith(privateKey, Jwts.SIG.RS256)
                 .compact();

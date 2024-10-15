@@ -1,4 +1,4 @@
-package com.bravos.news.servlet;
+package com.bravos.news.servlet.admin.api;
 
 import com.bravos.news.dao.CategoryDAO;
 import com.bravos.news.dto.CategoriesRequest;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/api/admin/categories")
+@WebServlet("/api/private/categories")
 public class CategoriesApiServlet extends HttpServlet {
 
     private ObjectMapper mapper;
@@ -48,6 +48,7 @@ public class CategoriesApiServlet extends HttpServlet {
         if (category != null) {
             categoryResponse.setId(category.getId());
             categoryResponse.setName(category.getName());
+            getServletContext().setAttribute("categories",new CategoryDAO().findAll());
         }
         writer.print(mapper.writeValueAsString(categoryResponse));
         writer.flush();

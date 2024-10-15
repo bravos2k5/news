@@ -1,11 +1,14 @@
-package com.bravos.news.servlet;
+package com.bravos.news.servlet.admin.view;
 
 import com.bravos.news.dao.CategoryDAO;
 import com.bravos.news.dao.LetterDAO;
 import com.bravos.news.dao.NewsDAO;
 import com.bravos.news.dao.UserDAO;
+import com.bravos.news.dto.NewsItemAdmin;
+import com.bravos.news.dto.UserInfo;
 import com.bravos.news.entity.Category;
 import com.bravos.news.entity.User;
+import com.bravos.news.entity.enums.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,29 +23,22 @@ import java.util.List;
 public class AdminServlet extends HttpServlet {
 
     private UserDAO userDAO;
-    private NewsDAO newsDAO;
+
     private CategoryDAO categoryDAO;
     private LetterDAO letterDAO;
 
     @Override
     public void init() {
         userDAO = new UserDAO();
-        newsDAO = new NewsDAO();
         categoryDAO = new CategoryDAO();
         letterDAO = new LetterDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        if(session.getAttribute("user") == null) {
-            resp.sendRedirect("login");
-            return;
-        }
         String function = req.getRequestURI().substring("/admin".length());
         switch (function) {
             case "/categories" -> handleCategory(req);
-            case "/news" -> handleNews(req);
             case "/personal" -> handlePersonal(req);
             case "/users" -> handleUsers(req);
             case "/letters" -> handleLetters(req);
@@ -52,7 +48,7 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void handleLetters(HttpServletRequest req) {
-
+        req.setAttribute("page","letters.jsp");
     }
 
     private void handleUsers(HttpServletRequest req) {
@@ -65,11 +61,6 @@ public class AdminServlet extends HttpServlet {
         req.setAttribute("page","personal.jsp");
     }
 
-    private void handleNews(HttpServletRequest req) {
-
-        req.setAttribute("page","newsadmin.jsp");
-    }
-
     private void handleDashBoard(HttpServletRequest req) {
         req.setAttribute("page","dashboard.jsp");
     }
@@ -79,12 +70,5 @@ public class AdminServlet extends HttpServlet {
         req.setAttribute("categories",categories);
         req.setAttribute("page","category.jsp");
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
-    }
-
-
 
 }

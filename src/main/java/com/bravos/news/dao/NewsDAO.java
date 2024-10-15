@@ -1,7 +1,6 @@
 package com.bravos.news.dao;
 
-import com.bravos.news.dto.NewsItem;
-import com.bravos.news.dto.NewsThread;
+import com.bravos.news.dto.*;
 import com.bravos.news.entity.News;
 import com.bravos.news.utils.DatabaseManager;
 import com.bravos.news.utils.XJdbc;
@@ -30,6 +29,65 @@ public class NewsDAO implements IDataObject<News, UUID> {
         return findBySql(sql);
     }
 
+    public boolean isCorrectAuthor(String authorId, String newsId) {
+        String sql = "SELECT isHome FROM News WHERE id = ? and authorId = ? ";
+        ResultSet rs = null;
+        try {
+            rs = XJdbc.getResultSet(sql, newsId,authorId);
+            return rs.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DatabaseManager.gI().closeResultSet(rs);
+        }
+    }
+
+    private List<NewsItemAdmin> findItemsAdminBySQL(String sql, Object... args) {
+        List<NewsItemAdmin> newsItems = new ArrayList<>();
+        ResultSet rs = null;
+        try {
+            rs = XJdbc.getResultSet(sql, args);
+            while (rs.next()) {
+                NewsItemAdmin newsItem = new NewsItemAdmin();
+                newsItem.setId(rs.getString("id"));
+                newsItem.setTitle(rs.getString("title"));
+                newsItem.setPostedDate(rs.getDate("postedDate"));
+                newsItems.add(newsItem);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DatabaseManager.gI().closeResultSet(rs);
+        }
+        return newsItems;
+    }
+
+    public int updateInfo(NewsAdminRequest request) {
+        String sql = "{CALL spUpdateNews(?,?,?,?,?)}";
+        return XJdbc.excuteUpdate(sql,
+                request.getId(),request.getTitle(),request.getContent(),request.getImage(),Integer.parseInt(request.getCategoryId()));
+    }
+
+    public List<NewsItemAdmin> findAllItemAdmin() {
+        String sql = "SELECT id, title, postedDate FROM News";
+        return findItemsAdminBySQL(sql);
+    }
+
+    public List<NewsItemAdmin> findByAuthor(UUID authorId) {
+        String sql = "SELECT * FROM News WHERE authorId = ?";
+        return findItemsAdminBySQL(sql,authorId);
+    }
+
+    public List<NewsItemAdmin> findByAuthorAndKey(UUID authorId, String key) {
+        String sql = "{CALL spFindNewsByAuthorAndKey(?,?)}";
+        return findItemsAdminBySQL(sql,authorId,key);
+    }
+
+    public List<NewsItemAdmin> findByKey(String key) {
+        String sql = "{CALL spFindNewsByKey(?)}";
+        return findItemsAdminBySQL(sql,key);
+    }
+
     @Override
     public News insert(News object) {
         String sql = "INSERT INTO News(id, title, categoryId, content, image, postedDate, authorId, viewCount, isHome) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -38,6 +96,13 @@ public class NewsDAO implements IDataObject<News, UUID> {
                 object.getContent(), object.getImage(), object.getPostedDate(),
                 object.getAuthorId(), object.getViewCount(), object.isHome());
         return object;
+    }
+
+    public int insert(NewsAdminRequest newsInfo, UUID authorId) {
+        String sql = "INSERT INTO News(id, title, categoryId, content, image, authorId) VALUES(?,?,?,?,?,?)";
+        return XJdbc.excuteUpdate(sql,
+                newsInfo.getId(),newsInfo.getTitle(),newsInfo.getCategoryId(),
+                newsInfo.getContent(),newsInfo.getImage(),authorId);
     }
 
     @Override
@@ -50,9 +115,9 @@ public class NewsDAO implements IDataObject<News, UUID> {
     }
 
     @Override
-    public void delete(News object) {
+    public boolean delete(News object) {
         String sql = "DELETE FROM News WHERE id = ?";
-        XJdbc.excuteUpdate(sql, object.getId());
+        return XJdbc.excuteUpdate(sql, object.getId()) > 0;
     }
 
     public List<NewsItem> getHomePageItems() {
@@ -161,7 +226,7 @@ public class NewsDAO implements IDataObject<News, UUID> {
                 news.setContent(rs.getString("content"));
                 news.setImage(rs.getString("image"));
                 news.setPostedDate(rs.getDate("postedDate"));
-                news.setAuthorId(UUID.nameUUIDFromBytes((rs.getBytes("authorId"))));
+                news.setAuthorId(UUID.fromString((rs.getString("authorId"))));
                 news.setViewCount(rs.getInt("viewCount"));
                 news.setHome(rs.getBoolean("isHome"));
                 newsList.add(news);

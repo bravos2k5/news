@@ -17,7 +17,7 @@ public class JwtFilter implements Filter {
             "/admin/users",
             "/admin/categories",
             "/admin/letters",
-            "/api/admin"
+            "/api/private"
     );
 
     @Override
@@ -27,9 +27,6 @@ public class JwtFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        HttpSession session = request.getSession();
-        Cookie[] cookies = request.getCookies();
-        UserInfo user = (UserInfo) session.getAttribute("user");
         String requestURI = request.getRequestURI();
 
         if(requestURI.endsWith(".jsp")) {
@@ -37,12 +34,22 @@ public class JwtFilter implements Filter {
             return;
         }
 
-        if(requestURI.startsWith("/admin") || requestURI.startsWith("/api")) {
+        Cookie[] cookies = request.getCookies();
+        HttpSession session = request.getSession();
 
-            if(user == null) {
-                response.sendRedirect(request.getContextPath() + "/login");
-                return;
-            }
+        UserInfo user = (UserInfo) session.getAttribute("user");
+
+        if((requestURI.startsWith("/admin") && user == null)) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        if(requestURI.startsWith("/api") && user == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        if(requestURI.startsWith("/admin") || requestURI.startsWith("/api")) {
 
             if (user.getRole() != Role.ADMIN) {
                 for (String uri : BLACK_LIST) {
@@ -76,8 +83,6 @@ public class JwtFilter implements Filter {
         return null;
     }
 
-
-
     private void deleteAccessKey(Cookie[] cookies, HttpServletResponse response) {
         for (Cookie cookie : cookies) {
             if(cookie.getName().equals("accessToken")) {
@@ -85,6 +90,7 @@ public class JwtFilter implements Filter {
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
                 cookie.setPath("/");
+                cookie.setHttpOnly(true);
                 response.addCookie(cookie);
             }
         }

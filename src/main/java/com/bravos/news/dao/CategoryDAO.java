@@ -44,9 +44,9 @@ public class CategoryDAO implements IDataObject<Category,Integer> {
     }
 
     @Override
-    public void delete(Category object) {
+    public boolean delete(Category object) {
         String sql = "DELETE FROM Category WHERE id = ?";
-        XJdbc.excuteUpdate(sql,object.getId());
+        return XJdbc.excuteUpdate(sql,object.getId()) > 0;
     }
 
     @Override

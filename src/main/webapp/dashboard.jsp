@@ -25,7 +25,7 @@
 </div>
 <script>
     function getDashBoard() {
-        fetch('/api/dashboard', {
+        fetch('/api/public/dashboard', {
             method: 'GET'
         })
             .then(response => {

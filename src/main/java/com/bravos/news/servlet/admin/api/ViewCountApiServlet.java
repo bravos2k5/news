@@ -1,4 +1,4 @@
-package com.bravos.news.servlet;
+package com.bravos.news.servlet.admin.api;
 
 import com.bravos.news.listener.DataStorage;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @WebServlet("/increaseViewCount")
-public class ViewCountServlet extends HttpServlet {
+public class ViewCountApiServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {

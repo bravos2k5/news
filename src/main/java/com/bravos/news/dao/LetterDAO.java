@@ -41,9 +41,9 @@ public class LetterDAO implements IDataObject<Letter, String> {
     }
 
     @Override
-    public void delete(Letter object) {
+    public boolean delete(Letter object) {
         String sql = "DELETE FROM Letter WHERE id = ?";
-        XJdbc.excuteUpdate(sql, object.getId());
+        return XJdbc.excuteUpdate(sql, object.getId()) > 0;
     }
 
     @Override

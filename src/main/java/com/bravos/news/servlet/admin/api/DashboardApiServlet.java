@@ -1,9 +1,9 @@
-package com.bravos.news.servlet;
+package com.bravos.news.servlet.admin.api;
 
 import com.bravos.news.listener.SessionListener;
+import com.bravos.news.utils.DatabaseManager;
 import com.bravos.news.utils.XJdbc;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,16 +17,17 @@ import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@WebServlet("/api/dashboard")
-public class DashboardServlet extends HttpServlet {
+@WebServlet("/api/public/dashboard")
+public class DashboardApiServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("json/application");
         PrintWriter writer = resp.getWriter();
         String sql = "{CALL spDashboard()}";
+        ResultSet rs = null;
         try {
-            ResultSet rs = XJdbc.getResultSet(sql);
+            rs = XJdbc.getResultSet(sql);
             if(rs.next()) {
                 writer.print(new ObjectMapper().writeValueAsString(new DashBoardData(
                         rs.getInt("categoryCount"),
@@ -38,6 +39,8 @@ public class DashboardServlet extends HttpServlet {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            DatabaseManager.gI().closeResultSet(rs);
         }
     }
 

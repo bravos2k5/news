@@ -1,77 +1,63 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/news-management.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-management.css">
 <div class="container">
-  <h1 id="mini-title">Quản lý tin tức</h1>
-  <button class="add-user-btn" onclick="openModal()">Thêm tin tức mới</button>
-  <table id="news-table" class="user-table">
-    <thead>
-    <tr>
-      <th>Tiêu đề</th>
-      <th>Danh mục</th>
-      <th>Tác giả</th>
-      <th>Ngày đăng</th>
-      <th>Lượt xem</th>
-      <th>Hiển thị trang chủ</th>
-      <th>Hành động</th>
-    </tr>
-    </thead>
-    <tbody id="newsTableBody">
-    <jsp:useBean id="newsList" scope="request" type="java.util.List<com.bravos.news.dto.NewsAdmin>"/>
-    <c:forEach var="news" items="${newsList}">
-      <tr>
-        <td>${news.title}</td>
-        <td>${news.categoryName}</td>
-        <td>${news.authorName}</td>
-        <td>${news.postedDate}</td>
-        <td>${news.viewCount}</td>
-        <td>${news.home ? 'Có' : 'Không'}</td>
-        <td>
-          <button class="action-btn edit-btn" onclick="editNews('${news.id}')">Sửa</button>
-          <button class="action-btn delete-btn" onclick="deleteNews('${news.id}')">Xóa</button>
-        </td>
-      </tr>
-    </c:forEach>
-    </tbody>
-  </table>
-</div>
+    <br>
+    <h2 style="color: #4a90e2">Quản lý tin tức</h2>
+    <br>
+    <button class="add-news-btn"><a style="text-decoration: none; color: white" href="${pageContext.request.contextPath}/admin/news/add">Thêm bài viết mới</a></button>
+    <div class="news-container">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Tìm kiếm bài viết...">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+        </div>
 
-<!-- Modal for adding/editing news -->
-<div id="newsModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2 id="modalTitle">Thêm tin tức mới</h2>
-    <form id="newsForm" enctype="multipart/form-data">
-      <input type="hidden" id="newsId" name="id">
-      <div class="form-group">
-        <label for="title">Tiêu đề:</label>
-        <input type="text" id="title" name="title" required>
-      </div>
-      <div class="form-group">
-        <label for="categoryId">Danh mục:</label>
-        <select id="categoryId" name="categoryId" required>
-          <c:forEach var="category" items="${categories}">
-            <option value="${category.id}">${category.name}</option>
-          </c:forEach>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="content">Nội dung:</label>
-        <textarea id="content" name="content" rows="5" required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="image">Hình ảnh:</label>
-        <input type="file" id="image" name="image" accept="image/*">
-        <img id="imagePreview" src="" alt="Preview" style="max-width: 200px; display: none;">
-      </div>
-      <div class="form-group">
-        <label for="isHome">Hiển thị trang chủ:</label>
-        <input type="checkbox" id="isHome" name="isHome">
-      </div>
-      <button type="button" onclick="submitNewsForm()" class="submit-btn">Lưu</button>
-    </form>
-  </div>
-</div>
+        <div class="loading"></div>
 
+        <div class="news-list">
+            <jsp:useBean id="newsItems" scope="request" type="java.util.List<com.bravos.news.dto.NewsItemAdmin>"/>
+            <c:forEach var="news" items="${newsItems}">
+                <div class="news-item">
+                    <div class="news-content">
+                        <div class="news-title">${news.title}</div>
+                        <div class="news-date">Ngày đăng: ${news.postedDate}</div>
+                    </div>
+                    <div class="news-actions">
+                        <a href="${pageContext.request.contextPath}/news/id/${news.id}"><i class="fas fa-eye"></i> Xem</a>
+                        <c:url var="editUrl" value="/admin/news/edit">
+                            <c:param name="id" value="${news.id}" />
+                        </c:url>
+                        <a href="${editUrl}"><i class="fas fa-edit"></i> Sửa</a>
+                        <a onclick="remove('${news.id}')" href="#"><i class="fas fa-trash"></i> Xóa</a>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+    </div>
+</div>
 <script src="${pageContext.request.contextPath}/js/news.js"></script>
+<script>
+
+
+
+    document.querySelector('.search-btn').addEventListener('click', function () {
+        const loadingElement = document.querySelector('.loading');
+        const newsListElement = document.querySelector('.news-list');
+
+        // Show loading spinner
+        loadingElement.style.display = 'block';
+        newsListElement.style.opacity = '0.5';
+
+        // Simulate search delay
+        setTimeout(function () {
+            // Hide loading spinner
+            loadingElement.style.display = 'none';
+            newsListElement.style.opacity = '1';
+
+            // Here you would typically update the news list based on search results
+            // For this example, we'll just log to the console
+            console.log('Search performed');
+        }, 1500);
+    });
+</script>

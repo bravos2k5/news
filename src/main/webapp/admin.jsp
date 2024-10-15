@@ -52,7 +52,7 @@
             </c:if>
 
             <li><a href="${pageContext.request.contextPath}/admin/news"
-                   class="${page == 'news.jsp' ? 'active' : ''}">Tin tức</a></li>
+                   class="${page == 'newsadmin.jsp' ? 'active' : ''}">Tin tức</a></li>
 
         </ul>
     </div>

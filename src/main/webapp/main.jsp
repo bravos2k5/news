@@ -57,12 +57,15 @@
             <div class="sidebar-box">
                 <h3>Đã xem</h3>
                 <ul>
-                    <jsp:useBean id="recentNewsList" scope="session" type="java.util.List<com.bravos.news.entity.News>"/>
+                    <jsp:useBean id="recentNewsList" scope="session"
+                                 type="java.util.List<com.bravos.news.entity.News>"/>
                     <c:if test="${recentNewsList.size() == 0}">
                         <li>Chưa có thông tin</li>
                     </c:if>
                     <c:forEach var="recentNews" items="${recentNewsList}">
-                        <li><a style="text-decoration: none" href="${pageContext.request.contextPath}/news/id/${recentNews.id}">- ${recentNews.title}</a></li>
+                        <li><a style="text-decoration: none"
+                               href="${pageContext.request.contextPath}/news/id/${recentNews.id}">- ${recentNews.title}</a>
+                        </li>
                     </c:forEach>
                 </ul>
             </div>
@@ -71,7 +74,6 @@
                 <p>Đăng ký để nhận bản tin mới nhất của chúng tôi.</p>
                 <form>
                     <label>
-
                         <input type="email" placeholder="Email của bạn"
                                style="width: 95%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
                     </label>

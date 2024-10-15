@@ -18,8 +18,17 @@ public class LogoutServlet extends HttpServlet {
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
                 cookie.setPath("/");
+                cookie.setHttpOnly(true);
                 resp.addCookie(cookie);
-                break;
+                continue;
+            }
+            if(cookie.getName().equals("sasToken")) {
+                cookie.setValue("");
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                cookie.setHttpOnly(true);
+                resp.addCookie(cookie);
             }
         }
         resp.sendRedirect( getServletContext().getContextPath() + "/login");

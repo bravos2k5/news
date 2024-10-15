@@ -80,9 +80,9 @@ public class UserDAO implements IDataObject<User, UUID> {
     }
 
     @Override
-    public void delete(User object) {
+    public boolean delete(User object) {
         String sql = "DELETE FROM [User] WHERE id = ?";
-        XJdbc.excuteUpdate(sql, object.getId());
+        return XJdbc.excuteUpdate(sql, object.getId()) > 0;
     }
 
     public User findByUsername(String username) {
