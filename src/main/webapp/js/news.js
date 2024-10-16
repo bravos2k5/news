@@ -24,7 +24,8 @@ async function save() {
         content: document.getElementById("content").value,
         categoryId: document.getElementById("category").value,
         imgStatus: isChanged,
-        image: isChanged ? newFile.name : document.getElementById("perm-img").src
+        image: isChanged ? newFile.name : document.getElementById("perm-img").src,
+        home: document.getElementById("home").value
     };
 
     let uploadSuccess = true;

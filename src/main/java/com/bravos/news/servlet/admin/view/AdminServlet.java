@@ -7,6 +7,7 @@ import com.bravos.news.dao.UserDAO;
 import com.bravos.news.dto.NewsItemAdmin;
 import com.bravos.news.dto.UserInfo;
 import com.bravos.news.entity.Category;
+import com.bravos.news.entity.Letter;
 import com.bravos.news.entity.User;
 import com.bravos.news.entity.enums.Role;
 import jakarta.servlet.ServletException;
@@ -48,6 +49,8 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void handleLetters(HttpServletRequest req) {
+        List<Letter> letters = letterDAO.findAll();
+        req.setAttribute("letters",letters);
         req.setAttribute("page","letters.jsp");
     }
 

@@ -2,7 +2,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 
-<jsp:useBean id="newsList" scope="request" type="java.util.List<com.bravos.news.dto.NewsItem>"/>
+<jsp:useBean id="newsList" scope="application" type="java.util.List<com.bravos.news.dto.NewsItem>"/>
 <c:set var="newsList" value="${newsList}"/>
 
 <c:forEach var="news" items="${newsList}">

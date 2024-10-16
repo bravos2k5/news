@@ -35,6 +35,14 @@
                 </c:forEach>
             </select>
         </div>
+        <br>
+        <jsp:useBean id="user" scope="session" type="com.bravos.news.dto.UserInfo"/>
+        <c:if test="${user.role == 'ADMIN'}">
+            <div class="form-group">
+                <label for="home">Hiển thị trên trang chủ:</label>
+                <input type="checkbox" id="home" name="home" value="home" ${news.home ? "checked" : ""}/>
+            </div>
+        </c:if>
         <div class="image-upload">
             <label for="image">Chọn ảnh mới</label>
             <input type="file" id="image" name="image" accept="image/*">

@@ -3,6 +3,7 @@ package com.bravos.news.servlet;
 import com.bravos.news.dao.NewsDAO;
 import com.bravos.news.dto.NewsItem;
 import com.bravos.news.dto.NewsThread;
+import com.bravos.news.dto.SideBarNews;
 import com.bravos.news.entity.News;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -38,9 +39,9 @@ public class NewsServlet extends HttpServlet {
                 List<News> newsList = newsDAO.getNewsByCategory(news.getNews().getCategoryId());
                 newsList.remove(new News(id));
                 HttpSession session = req.getSession();
-                List<News> recentNews = (List<News>) session.getAttribute("recentNewsList");
-                recentNews.remove(news.getNews());
-                recentNews.addFirst(news.getNews());
+                List<SideBarNews> recentNews = (List<SideBarNews>) session.getAttribute("recentNewsList");
+                recentNews.remove(new SideBarNews(news.getNews().getId()));
+                recentNews.addFirst(new SideBarNews(news.getNews().getId(),news.getNews().getTitle()));
                 if(recentNews.size() == 11) {
                     recentNews.removeLast();
                 }

@@ -14,4 +14,5 @@ public class NewsAdminRequest {
     private String image;
     private String categoryId;
     private boolean imgStatus;
+    private String home;
 }

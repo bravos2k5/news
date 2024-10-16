@@ -1,6 +1,6 @@
 package com.bravos.news.listener;
 
-import com.bravos.news.entity.News;
+import com.bravos.news.dto.SideBarNews;
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionEvent;
@@ -19,7 +19,7 @@ public class SessionListener implements HttpSessionListener {
     @Override
     public void sessionCreated(HttpSessionEvent se) {
         HttpSession session = se.getSession();
-        session.setAttribute("recentNewsList",new ArrayList<News>());
+        session.setAttribute("recentNewsList",new ArrayList<SideBarNews>());
         session.setAttribute("viewedNews",new HashSet<String>());
         ++activeSessions;
     }

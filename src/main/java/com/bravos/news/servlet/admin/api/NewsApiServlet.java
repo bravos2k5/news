@@ -6,7 +6,6 @@ import com.bravos.news.dto.UserInfo;
 import com.bravos.news.entity.News;
 import com.bravos.news.entity.enums.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ public class NewsApiServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String uri = req.getRequestURI();
         if(uri.startsWith("/api/public/news/edit")) {
             updateNews(req,resp);
@@ -92,26 +91,35 @@ public class NewsApiServlet extends HttpServlet {
     }
 
     private void updateNews(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        NewsAdminRequest news = mapper.readValue(req.getReader(),NewsAdminRequest.class);
+        NewsAdminRequest newsRequest = mapper.readValue(req.getReader(),NewsAdminRequest.class);
         HttpSession session = req.getSession();
         UserInfo user = (UserInfo) session.getAttribute("user");
         NewsResponse newsResponse = new NewsResponse();
-        if(news == null) {
+        if(newsRequest == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
+        News news = newsDAO.findById(UUID.fromString(newsRequest.getId()));
+        if (news == null) {
+            resp.sendError(HttpServletResponse.SC_CONFLICT);
+            return;
+        }
         if(user.getRole() != Role.ADMIN &&
-                !newsDAO.isCorrectAuthor(user.getId().toString(),news.getId())) {
+                !newsDAO.isCorrectAuthor(user.getId().toString(),newsRequest.getId())) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-        if(news.isImgStatus()) {
-            String imgSrc = "https://bravosrepo2.blob.core.windows.net/image/" + news.getId() + "/" + news.getImage();
-            news.setImage(imgSrc);
+        if(newsRequest.isImgStatus()) {
+            String imgSrc = "https://bravosrepo2.blob.core.windows.net/image/" + newsRequest.getId() + "/" + newsRequest.getImage();
+            newsRequest.setImage(imgSrc);
         }
-        int status = newsDAO.updateInfo(news);
+        if(newsRequest.getHome() == null) newsRequest.setHome("");
+        if(user.getRole() != Role.ADMIN) {
+            newsRequest.setHome(news.isHome() ? "home" : "");
+        }
+        int status = newsDAO.updateInfo(newsRequest);
         newsResponse.setStatus(status);
-        newsResponse.setNewImgUrl(news.getImage());
+        newsResponse.setNewImgUrl(newsRequest.getImage());
         PrintWriter writer = resp.getWriter();
         writer.print(mapper.writeValueAsString(newsResponse));
         writer.flush();

@@ -62,10 +62,45 @@ public class NewsDAO implements IDataObject<News, UUID> {
         return newsItems;
     }
 
+    private List<SideBarNews> findSideBarNewsBySQL(String sql, Object... args) {
+        List<SideBarNews> newsItems = new ArrayList<>();
+        ResultSet rs = null;
+        try {
+            rs = XJdbc.getResultSet(sql, args);
+            while (rs.next()) {
+                SideBarNews newsItem = new SideBarNews();
+                newsItem.setId(UUID.fromString(rs.getString("id")));
+                newsItem.setTitle(rs.getString("title"));
+                newsItems.add(newsItem);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DatabaseManager.gI().closeResultSet(rs);
+        }
+        return newsItems;
+    }
+
     public int updateInfo(NewsAdminRequest request) {
-        String sql = "{CALL spUpdateNews(?,?,?,?,?)}";
+        String sql = "{CALL spUpdateNews(?,?,?,?,?,?)}";
         return XJdbc.excuteUpdate(sql,
-                request.getId(),request.getTitle(),request.getContent(),request.getImage(),Integer.parseInt(request.getCategoryId()));
+                request.getId(),
+                request.getTitle(),
+                request.getContent(),
+                request.getImage(),
+                Integer.parseInt(request.getCategoryId()),
+                request.getHome().equals("home")
+        );
+    }
+
+    public List<SideBarNews> getImportantNews() {
+        String sql = "{CALL getImportantNews()}";
+        return findSideBarNewsBySQL(sql);
+    }
+
+    public List<SideBarNews> getLastestNews() {
+        String sql = "{CALL getLatestNews()}";
+        return findSideBarNewsBySQL(sql);
     }
 
     public List<NewsItemAdmin> findAllItemAdmin() {

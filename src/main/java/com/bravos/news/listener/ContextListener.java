@@ -2,6 +2,8 @@ package com.bravos.news.listener;
 
 import com.bravos.news.dao.CategoryDAO;
 import com.bravos.news.dao.NewsDAO;
+import com.bravos.news.dto.NewsItem;
+import com.bravos.news.dto.SideBarNews;
 import com.bravos.news.entity.Category;
 import com.bravos.news.jwt.JwtFilter;
 import com.bravos.news.utils.DatabaseManager;
@@ -19,14 +21,14 @@ import java.util.*;
 @WebListener
 public class ContextListener implements ServletContextListener {
 
+    private final NewsDAO newsDAO = new NewsDAO();
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext context = sce.getServletContext();
-        List<Category> categories = new CategoryDAO().findAll();
-        context.setAttribute("categories",categories);
         FilterRegistration.Dynamic registration = context.addFilter("jwtFilter",new JwtFilter());
         registration.addMappingForUrlPatterns(null,false,"/*");
-        this.startCountViews();
+        this.firstInitialize(context);
     }
 
     @Override
@@ -38,11 +40,33 @@ public class ContextListener implements ServletContextListener {
             Driver driver = drivers.nextElement();
             try {
                 DriverManager.deregisterDriver(driver);
-                System.out.println("Deregistered JDBC driver: " + driver);
             } catch (SQLException e) {
                 System.err.println("Error deregistering JDBC driver: " + driver);
             }
         }
+    }
+
+    private void firstInitialize(ServletContext context) {
+        List<Category> categories = new CategoryDAO().findAll();
+        context.setAttribute("categories",categories);
+        this.startCountViews();
+        this.updateNews(context);
+    }
+
+    private void updateNews(ServletContext context) {
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                List<SideBarNews> lastestNews = newsDAO.getLastestNews();
+                context.setAttribute("latestNewsList",lastestNews);
+                List<SideBarNews> importantNews = newsDAO.getImportantNews();
+                context.setAttribute("importantNewsList",importantNews);
+                List<NewsItem> homePageItems = newsDAO.getHomePageItems();
+                context.setAttribute("newsList",homePageItems);
+            }
+        };
+        timer.scheduleAtFixedRate(task,0,300000);
     }
 
     private void startCountViews() {

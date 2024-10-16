@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Web Tin Tức</title>
+    <title>Bravos News</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <link rel="icon" type="image/x-icon" href="https://s1.vnecdn.net/vnexpress/restruct/images/favicon.ico">
 </head>
@@ -33,38 +33,40 @@
             <%--@elvariable id="page" type="java.lang.String"--%>
             <jsp:include page="${page}"/>
         </section>
-        <aside>
+        <aside id="sideNews">
             <div class="sidebar-box">
                 <h3>Quan trọng</h3>
                 <ul>
-                    <li>Bản tin 1</li>
-                    <li>Bản tin 2</li>
-                    <li>Bản tin 3</li>
-                    <li>Bản tin 4</li>
-                    <li>Bản tin 5</li>
+                    <jsp:useBean id="importantNewsList" scope="application" type="java.util.List<com.bravos.news.dto.SideBarNews>"/>
+                    <c:forEach var="news" items="${importantNewsList}">
+                        <li><a style="text-decoration: none"
+                               href="${pageContext.request.contextPath}/news/id/${news.id}">- ${news.title}</a>
+                        </li>
+                    </c:forEach>
                 </ul>
             </div>
             <div class="sidebar-box">
                 <h3>Mới nhất</h3>
                 <ul>
-                    <li>Bản tin mới 1</li>
-                    <li>Bản tin mới 2</li>
-                    <li>Bản tin mới 3</li>
-                    <li>Bản tin mới 4</li>
-                    <li>Bản tin mới 5</li>
+                    <jsp:useBean id="latestNewsList" scope="application" type="java.util.List<com.bravos.news.dto.SideBarNews>"/>
+                    <c:forEach var="news" items="${latestNewsList}">
+                        <li><a style="text-decoration: none"
+                               href="${pageContext.request.contextPath}/news/id/${news.id}">- ${news.title}</a>
+                        </li>
+                    </c:forEach>
                 </ul>
             </div>
             <div class="sidebar-box">
                 <h3>Đã xem</h3>
                 <ul>
                     <jsp:useBean id="recentNewsList" scope="session"
-                                 type="java.util.List<com.bravos.news.entity.News>"/>
+                                 type="java.util.List<com.bravos.news.dto.SideBarNews>"/>
                     <c:if test="${recentNewsList.size() == 0}">
                         <li>Chưa có thông tin</li>
                     </c:if>
-                    <c:forEach var="recentNews" items="${recentNewsList}">
+                    <c:forEach var="news" items="${recentNewsList}">
                         <li><a style="text-decoration: none"
-                               href="${pageContext.request.contextPath}/news/id/${recentNews.id}">- ${recentNews.title}</a>
+                               href="${pageContext.request.contextPath}/news/id/${news.id}">- ${news.title}</a>
                         </li>
                     </c:forEach>
                 </ul>
@@ -74,13 +76,12 @@
                 <p>Đăng ký để nhận bản tin mới nhất của chúng tôi.</p>
                 <form>
                     <label>
-                        <input type="email" placeholder="Email của bạn"
+                        <input name="emailForm" id="emailForm" type="email" placeholder="Email của bạn"
                                style="width: 95%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
                     </label>
-                    <button type="submit"
+                    <button type="button" onclick="register()"
                             style="width: 100%; padding: 8px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Đăng
-                        ký
+                        Đăng ký
                     </button>
                 </form>
             </div>
@@ -98,18 +99,16 @@
         <div class="footer-section">
             <h3>Liên kết nhanh</h3>
             <ul>
-                <li><a href="#">Trang chủ</a></li>
-                <li><a href="#">Tin tức mới nhất</a></li>
-                <li><a href="#">Sự kiện</a></li>
+                <li><a href="${pageContext.request.contextPath}/home">Trang chủ</a></li>
+                <li><a href="#sideNews">Tin tức mới nhất</a></li>
                 <li><a href="#">Liên hệ</a></li>
             </ul>
         </div>
         <div class="footer-section">
             <h3>Liên hệ</h3>
             <ul>
-                <li>Email: info@thietketudo.vn</li>
-                <li>Điện thoại: (84) 123 456 789</li>
-                <li>Địa chỉ: 123 Đường ABC, Quận XYZ, Hà Nội</li>
+                <li>Email: baonqps41272@gmail.com</li>
+                <li>Điện thoại: (84) 704 795 312</li>
             </ul>
         </div>
         <div class="footer-section">
@@ -123,10 +122,10 @@
         </div>
     </div>
     <div class="footer-bottom">
-        <p>&copy; 2024 Thiết kế tự do. Tất cả các quyền được bảo lưu.</p>
+        <p>&copy; 2024 Nguyễn Quốc Bảo PS41272.</p>
     </div>
 </footer>
+<script src="${pageContext.request.contextPath}/js/letter.js"></script>
 </body>
-
 </html>
 
