@@ -23,6 +23,9 @@ public class ContextListener implements ServletContextListener {
 
     private final NewsDAO newsDAO = new NewsDAO();
 
+    private Timer newsTimer;
+    private Timer countViewsTimer;
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext context = sce.getServletContext();
@@ -34,6 +37,8 @@ public class ContextListener implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         updateCountViews();
+        newsTimer.cancel();
+        countViewsTimer.cancel();
         DatabaseManager.gI().shutdown();
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
@@ -49,11 +54,11 @@ public class ContextListener implements ServletContextListener {
     private void firstInitialize(ServletContext context) {
         List<Category> categories = new CategoryDAO().findAll();
         context.setAttribute("categories",categories);
-        this.startCountViews();
-        this.updateNews(context);
+        countViewsTimer = this.startCountViews();
+        newsTimer = this.updateNews(context);
     }
 
-    private void updateNews(ServletContext context) {
+    private Timer updateNews(ServletContext context) {
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
@@ -67,9 +72,10 @@ public class ContextListener implements ServletContextListener {
             }
         };
         timer.scheduleAtFixedRate(task,0,300000);
+        return timer;
     }
 
-    private void startCountViews() {
+    private Timer startCountViews() {
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
@@ -78,6 +84,7 @@ public class ContextListener implements ServletContextListener {
             }
         };
         timer.scheduleAtFixedRate(task,300000,300000);
+        return timer;
     }
 
     private synchronized void updateCountViews() {

@@ -37,7 +37,6 @@ public class KeyLoader {
                     InputDecryptorProvider provider = new JceOpenSSLPKCS8DecryptorProviderBuilder()
                             .setProvider("BC")
                             .build(password.toCharArray());
-                    System.out.println(converter.getPrivateKey(pkcs8EncryptedPrivateKeyInfo.decryptPrivateKeyInfo(provider)));
                     return converter.getPrivateKey(pkcs8EncryptedPrivateKeyInfo.decryptPrivateKeyInfo(provider));
                 }
                 case PEMEncryptedKeyPair pemEncryptedKeyPair -> {

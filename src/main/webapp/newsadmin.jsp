@@ -6,7 +6,9 @@
     <br>
     <h2 style="color: #4a90e2">Quản lý tin tức</h2>
     <br>
-    <button class="add-news-btn"><a style="text-decoration: none; color: white" href="${pageContext.request.contextPath}/admin/news/add">Thêm bài viết mới</a></button>
+    <button class="add-news-btn"><a style="text-decoration: none; color: white"
+                                    href="${pageContext.request.contextPath}/admin/news/add">Thêm bài viết mới</a>
+    </button>
     <div class="news-container">
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Tìm kiếm bài viết...">
@@ -24,9 +26,10 @@
                         <div class="news-date">Ngày đăng: ${news.postedDate}</div>
                     </div>
                     <div class="news-actions">
-                        <a href="${pageContext.request.contextPath}/news/id/${news.id}"><i class="fas fa-eye"></i> Xem</a>
+                        <a href="${pageContext.request.contextPath}/news/id/${news.id}"><i class="fas fa-eye"></i>
+                            Xem</a>
                         <c:url var="editUrl" value="/admin/news/edit">
-                            <c:param name="id" value="${news.id}" />
+                            <c:param name="id" value="${news.id}"/>
                         </c:url>
                         <a href="${editUrl}"><i class="fas fa-edit"></i> Sửa</a>
                         <a onclick="remove('${news.id}')" href="#"><i class="fas fa-trash"></i> Xóa</a>
@@ -38,7 +41,6 @@
 </div>
 <script src="${pageContext.request.contextPath}/js/news.js"></script>
 <script>
-
 
 
     document.querySelector('.search-btn').addEventListener('click', function () {

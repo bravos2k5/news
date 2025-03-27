@@ -32,6 +32,7 @@ public final class DatabaseManager {
             config.setJdbcUrl(connectionUrl);
             config.setUsername(username);
             config.setPassword(password);
+            config.setAutoCommit(false);
             config.setMaximumPoolSize(10);
             config.setMinimumIdle(2);
             config.setIdleTimeout(300000);
@@ -118,4 +119,5 @@ public final class DatabaseManager {
             instance = null;
         }
     }
+
 }
